@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h1>GRAYTRANSLATOR</h1>
+    <hr>
+    <br><br><br><br>
+    <form method="post">
+        {%csrf_token%}
+        <div class="row mt-5">
+            <div class="col-lg-5">
+                <textarea name="before" placeholder="번역하고 싶은 문장을 입력하세요" class="form-control" style="height: 300px;">{{ btext }}</textarea>
+            </div>
+            <div class="col-lg-2 text-center">
+                <h5>FROM</h5>
+                <select name="from" class="form-select" size="3" aria-label="size 3 select example">
+                    <option disabled>번역할 언어를선택</option>
+                    <option value="es" {%if from == "es"%} selected {%endif%}>스페인어</option>
+                    <option value="fr" {%if from == "fr"%} selected {%endif%}>프랑스어</option>
+                    <option value="en" {%if from == "en"%} selected {%endif%}>영어</option>
+                    <option value="ja" {%if from == "ja"%} selected {%endif%}>일본어</option>
+                    <option value="ko" {%if from == "ko" or not from%} selected {%endif%}>한국어</option>
+                </select>
+                <button class="btn btn-secondary mt-3 bm-3">TRANS</button>
+                <h5>TO</h5>
+                <select name="to" class="form-select" size="3" aria-label="size 3 select example">
+                    <option disabled>원하는 언어로 번역</option>
+                    <option value="es" {%if to == "es"%} selected {%endif%}>스페인어</option>
+                    <option value="fr" {%if to == "fr"%} selected {%endif%}>프랑스어</option>
+                    <option value="en" {%if to == "en"%} selected {%endif%}>영어</option>
+                    <option value="ja" {%if to == "ja"%} selected {%endif%}>일본어</option>
+                    <option value="ko" {%if to == "ko"%} selected {%endif%}>한국어</option>
+                </select>
+            </div>
+            <div class="col-lg-5">
+                <textarea class="form-control" style="height: 300px;">{{atext}}</textarea>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load mathfilters %}
+
+<div class="container mt-5 mb-5 text-center">
+    
+    <h1>{{ to.subject }}</h1>
+    <div class="text-end">
+        작성자:{{to.writer}}
+    </div>
+    <textarea class="form-control" disabled style="font-size: 30;">{{to.content}}</textarea>
+
+    <hr>
+
+ 
+        {% if user in to.voter.all %}
+            <div class="row">
+                {% for i in clist %}
+                    <div class="col-lg-4 mt-4 text-center">
+                        <img src="{{i.pic.url}}" height="150px">
+                            <div class="form-check mb-5 text-center" >
+                                <h5>{{i.name}}</h5>
+                                <textarea disabled class="form-control">{{i.comment}}</textarea>
+                                <div class="progress mt-4">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: {{i.choicer.count|div:to.voter.count|mul:100}}%">{{i.choicer.count|div:to.voter.count|mul:100}}%</div>
+                                </div>
+                            </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'vote:cancel' to.id %}"><button class="btn btn-danger">CANCEL</button></a>
+        {% else %}
+        <form method="post" action="{% url 'vote:vote' to.id %}">
+            <div class="row">
+                {% csrf_token %}
+                {% for i in clist %}
+                    <div class="col-lg-4 mt-4 text-center">
+                        <img src="{{i.pic.url}}" height="150px">
+                        <div class="form-check mb-5">
+                            <input class="form-check-input" {% if forloop.first %} checked {% endif %} type="radio" name="choice" value="{{i.id}}" id="flexRadioDefault1">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                <h5>{{i.name}}</h5>
+                            </label>
+                            <textarea disabled class="form-control">{{i.comment}}</textarea>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">북마크설정</button>
+                </div>
+                <a><button class="btn btn-primary">VOTE</button> </a>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+
+
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ADD BOOKMARK</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'book:create' %}">
+                {%csrf_token%}
+                <div class="modal-body">
+                    <div class="text-end">
+                        <input name="impo" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="btn-check-outlined">♥관심</label>
+                    </div>
+                    북마크를 추가하시겠습니까? <br>
+                    <br>
+                    좋아하는 사이트라면 관심목록에 추가하세요 <br>
+                    <br>
+                    <textarea class="form-control" name="comment" placeholder="페이지 설명"></textarea>
+                    <div class="text-end">
+                        
+                    <br>
+                        <input type="hidden" name="sname" value="[VOTE]{{to.subject}}">
+                        <input type="hidden" name="surl" value="{{request.path}}">
+                    </div>
+                </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
